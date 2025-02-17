@@ -57,6 +57,18 @@ function Header() {
     login(); // Proceed with normal Google login
   };
 
+  const openInExternalBrowser = () => {
+    const url = "https://tuan-ai-trip-planner.vercel.app/";
+  
+    if (navigator.userAgent.match(/Android/i)) {
+      // Use intent scheme for Android
+      window.location.href = `intent://${url.replace("https://", "")}#Intent;scheme=https;package=com.android.chrome;end;`;
+    } else {
+      // Open a new tab for iOS and other devices
+      window.open(url, "_blank");
+    }
+  };
+
   // Show this message if the user is in Messenger
   if (isMessenger) {
     return (
@@ -67,7 +79,7 @@ function Header() {
         <p className="text-gray-700 mt-2">Please open this page in Chrome or Safari.</p>
         <Button
           className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
-          onClick={() => (window.location.href = "https://tuan-ai-trip-planner.vercel.app/")}
+          onClick={openInExternalBrowser}
         >
           Open in Chrome or Safari
         </Button>
