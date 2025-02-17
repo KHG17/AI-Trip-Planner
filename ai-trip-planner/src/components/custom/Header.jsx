@@ -29,7 +29,7 @@ function Header() {
   const location = useLocation();
   const [openDialog, setOpenDialog] = useState(false);
   const [mobileMenu, setMobileMenu] = useState(false);
-  const [isMessenger, setIsMessenger] = useState(false); // State to track Messenger browser
+  const [isMessenger, setIsMessenger] = useState(false);
 
   // Check if user is logged in by accessing localStorage
   useEffect(() => {
@@ -44,31 +44,6 @@ function Header() {
     setIsMessenger(isFacebookInAppBrowser());
   }, []);
 
-  const login = useGoogleLogin({
-    onSuccess: (codeResponse) => GetUserProfile(codeResponse),
-    onError: (error) => console.log(error),
-  });
-
-  const handleLogin = () => {
-    if (isMessenger) {
-      alert("Google Sign-In does not work inside Facebook Messenger. Please open this page in Chrome or Safari.");
-      return;
-    }
-    login(); // Proceed with normal Google login
-  };
-
-  const openInExternalBrowser = () => {
-    const url = "https://tuan-ai-trip-planner.vercel.app/";
-  
-    if (navigator.userAgent.match(/Android/i)) {
-      // Use intent scheme for Android
-      window.location.href = `intent://${url.replace("https://", "")}#Intent;scheme=https;package=com.android.chrome;end;`;
-    } else {
-      // Open a new tab for iOS and other devices
-      window.open(url, "_blank");
-    }
-  };
-
   // Show this message if the user is in Messenger
   if (isMessenger) {
     return (
@@ -77,15 +52,15 @@ function Header() {
           Google Sign-In does not work inside Facebook Messenger.
         </p>
         <p className="text-gray-700 mt-2">Please open this page in Chrome or Safari.</p>
-        <Button
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
-          onClick={openInExternalBrowser}
-        >
-          Open in Chrome or Safari
-        </Button>
+        <p>😪🥺😭</p>
       </div>
     );
   }
+
+  const login = useGoogleLogin({
+    onSuccess: (codeResponse) => GetUserProfile(codeResponse),
+    onError: (error) => console.log(error),
+  });
 
   const GetUserProfile = (tokenInfo) => {
     axios
@@ -223,7 +198,7 @@ function Header() {
                       Sign into the app with Google authentication securely.
                     </p>
                     <Button
-                      onClick={handleLogin}
+                      onClick={login}
                       className="w-full mt-5 bg-white text-gray-700 font-semibold border border-gray-300 hover:bg-gray-100 flex items-center gap-2 py-2 px-4 rounded-lg shadow-md"
                     >
                       <FcGoogle className="text-2xl" />
