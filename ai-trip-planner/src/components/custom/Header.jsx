@@ -18,13 +18,18 @@ import { Menu } from "lucide-react"; // For a mobile menu icon
 import axios from "axios";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 
+function isFacebookInAppBrowser() {
+  const userAgent = navigator.userAgent;
+  return /FBAN|FBAV/i.test(userAgent); // Detect Facebook App or Messenger
+}
+
 function Header() {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
   const [openDialog, setOpenDialog] = useState(false);
   const [mobileMenu, setMobileMenu] = useState(false);
-  const [isMessenger, setIsMessenger] = useState(false);
+  const [isMessenger, setIsMessenger] = useState(false); // State to track Messenger browser
 
   // Check if user is logged in by accessing localStorage
   useEffect(() => {
@@ -36,13 +41,13 @@ function Header() {
 
   // Check if the user is inside Facebook Messenger
   useEffect(() => {
-    const checkMessenger = () => {
-      const userAgent = window.navigator.userAgent;
-      setIsMessenger(/FBAN|FBAV/i.test(userAgent));
-    };
-  
-    checkMessenger();
+    setIsMessenger(isFacebookInAppBrowser());
   }, []);
+
+  const login = useGoogleLogin({
+    onSuccess: (codeResponse) => GetUserProfile(codeResponse),
+    onError: (error) => console.log(error),
+  });
 
   const handleLogin = () => {
     if (isMessenger) {
@@ -52,6 +57,7 @@ function Header() {
     login(); // Proceed with normal Google login
   };
 
+
   // Show this message if the user is in Messenger
   if (isMessenger) {
     return (
@@ -60,15 +66,15 @@ function Header() {
           Google Sign-In does not work inside Facebook Messenger.
         </p>
         <p className="text-gray-700 mt-2">Please open this page in Chrome or Safari.</p>
-        <p>😪🥺😭</p>
+        <Button
+          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
+          onClick={openInExternalBrowser}
+        >
+          Open in Chrome or Safari
+        </Button>
       </div>
     );
   }
-
-  const login = useGoogleLogin({
-    onSuccess: (codeResponse) => GetUserProfile(codeResponse),
-    onError: (error) => console.log(error),
-  });
 
   const GetUserProfile = (tokenInfo) => {
     axios
