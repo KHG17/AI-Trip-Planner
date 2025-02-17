@@ -52,7 +52,7 @@ function Header() {
   };
 
   // Show this message if the user is in Messenger
-  if (isMessenger) {
+  if (isFacebookInAppBrowser) {
     return (
       <div className="fixed top-0 left-0 w-full h-full bg-white flex flex-col justify-center items-center text-center z-50">
         <p className="text-lg font-bold text-gray-900">
