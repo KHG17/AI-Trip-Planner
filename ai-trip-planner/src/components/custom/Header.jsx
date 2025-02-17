@@ -46,18 +46,24 @@ function Header() {
 
   const handleLogin = () => {
     if (isMessenger) {
-      return (
-        <div className="fixed top-0 left-0 w-full h-full bg-white flex flex-col justify-center items-center text-center z-50">
-          <p className="text-lg font-bold text-gray-900">
-            Google Sign-In does not work inside Facebook Messenger.
-          </p>
-          <p className="text-gray-700 mt-2">Please open this page in Chrome or Safari.</p>
-          <p>😪🥺😭</p>
-        </div>
-      );
+      alert("Google Sign-In does not work inside Facebook Messenger. Please open this page in Chrome or Safari.");
+      return;
     }
     login(); // Proceed with normal Google login
   };
+
+  // Show this message if the user is in Messenger
+  if (isMessenger) {
+    return (
+      <div className="fixed top-0 left-0 w-full h-full bg-white flex flex-col justify-center items-center text-center z-50">
+        <p className="text-lg font-bold text-gray-900">
+          Google Sign-In does not work inside Facebook Messenger.
+        </p>
+        <p className="text-gray-700 mt-2">Please open this page in Chrome or Safari.</p>
+        <p>😪🥺😭</p>
+      </div>
+    );
+  }
 
   const login = useGoogleLogin({
     onSuccess: (codeResponse) => GetUserProfile(codeResponse),
