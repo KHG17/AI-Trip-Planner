@@ -51,29 +51,23 @@ function Header() {
 
   const handleLogin = () => {
     if (isMessenger) {
-      alert("Google Sign-In does not work inside Facebook Messenger. Please open this page in Chrome or Safari.");
-      return;
+      return (
+        <div className="fixed top-0 left-0 w-full h-full bg-white flex flex-col justify-center items-center text-center z-50">
+          <p className="text-lg font-bold text-gray-900">
+            Google Sign-In does not work inside Facebook Messenger.
+          </p>
+          <p className="text-gray-700 mt-2">Please open this page in Chrome or Safari.</p>
+          <Button
+            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
+            onClick={() => (window.location.href = "https://tuan-ai-trip-planner.vercel.app/")}
+          >
+            Open in Chrome or Safari
+          </Button>
+        </div>
+      );
     }
     login(); // Proceed with normal Google login
   };
-
-  // Show this message if the user is in Messenger
-  if (isMessenger) {
-    return (
-      <div className="fixed top-0 left-0 w-full h-full bg-white flex flex-col justify-center items-center text-center z-50">
-        <p className="text-lg font-bold text-gray-900">
-          Google Sign-In does not work inside Facebook Messenger.
-        </p>
-        <p className="text-gray-700 mt-2">Please open this page in Chrome or Safari.</p>
-        <Button
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
-          onClick={() => (window.location.href = "https://tuan-ai-trip-planner.vercel.app/")}
-        >
-          Open in Chrome or Safari
-        </Button>
-      </div>
-    );
-  }
 
   const GetUserProfile = (tokenInfo) => {
     axios
