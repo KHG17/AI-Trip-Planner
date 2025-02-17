@@ -18,11 +18,6 @@ import { Menu } from "lucide-react"; // For a mobile menu icon
 import axios from "axios";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 
-function isFacebookInAppBrowser() {
-  const userAgent = navigator.userAgent || navigator.vendor;
-  return /FBAN|FBAV/i.test(userAgent); // Detect Facebook App or Messenger
-}
-
 function Header() {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
@@ -41,7 +36,12 @@ function Header() {
 
   // Check if the user is inside Facebook Messenger
   useEffect(() => {
-    setIsMessenger(isFacebookInAppBrowser());
+    const checkMessenger = () => {
+      const userAgent = window.navigator.userAgent;
+      setIsMessenger(/FBAN|FBAV/i.test(userAgent));
+    };
+  
+    checkMessenger();
   }, []);
 
   // Show this message if the user is in Messenger
