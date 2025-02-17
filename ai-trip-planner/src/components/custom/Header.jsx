@@ -18,6 +18,11 @@ import { Menu } from "lucide-react"; // For a mobile menu icon
 import axios from "axios";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 
+function isFacebookInAppBrowser() {
+  const userAgent = navigator.userAgent || navigator.vendor;
+  return /FBAN|FBAV/i.test(userAgent); // Detect Facebook App or Messenger
+}
+
 function Header() {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
@@ -37,6 +42,14 @@ function Header() {
     onSuccess: (codeResponse) => GetUserProfile(codeResponse),
     onError: (error) => console.log(error),
   });
+
+  const handleLogin = () => {
+    if (isFacebookInAppBrowser()) {
+      alert("Google Sign-In does not work inside Facebook Messenger. Please open this page in Chrome or Safari.");
+      return;
+    }
+    login(); // Proceed with normal Google login
+  };
 
   const GetUserProfile = (tokenInfo) => {
     axios
@@ -174,7 +187,7 @@ function Header() {
                       Sign into the app with Google authentication securely.
                     </p>
                     <Button
-                      onClick={login}
+                      onClick={handleLogin}
                       className="w-full mt-5 bg-white text-gray-700 font-semibold border border-gray-300 hover:bg-gray-100 flex items-center gap-2 py-2 px-4 rounded-lg shadow-md"
                     >
                       <FcGoogle className="text-2xl" />
