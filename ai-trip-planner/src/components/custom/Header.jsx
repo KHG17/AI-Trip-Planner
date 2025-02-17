@@ -29,6 +29,7 @@ function Header() {
   const location = useLocation();
   const [openDialog, setOpenDialog] = useState(false);
   const [mobileMenu, setMobileMenu] = useState(false);
+  const [isMessenger, setIsMessenger] = useState(false); // State to track Messenger browser
 
   // Check if user is logged in by accessing localStorage
   useEffect(() => {
@@ -38,13 +39,18 @@ function Header() {
     }
   }, []);
 
+  // Check if the user is inside Facebook Messenger
+  useEffect(() => {
+    setIsMessenger(isFacebookInAppBrowser());
+  }, []);
+
   const login = useGoogleLogin({
     onSuccess: (codeResponse) => GetUserProfile(codeResponse),
     onError: (error) => console.log(error),
   });
 
   const handleLogin = () => {
-    if (isFacebookInAppBrowser()) {
+    if (isMessenger) {
       alert("Google Sign-In does not work inside Facebook Messenger. Please open this page in Chrome or Safari.");
       return;
     }
@@ -52,7 +58,7 @@ function Header() {
   };
 
   // Show this message if the user is in Messenger
-  if (isFacebookInAppBrowser) {
+  if (isMessenger) {
     return (
       <div className="fixed top-0 left-0 w-full h-full bg-white flex flex-col justify-center items-center text-center z-50">
         <p className="text-lg font-bold text-gray-900">
