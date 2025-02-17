@@ -64,12 +64,7 @@ function Header() {
           Google Sign-In does not work inside Facebook Messenger.
         </p>
         <p className="text-gray-700 mt-2">Please open this page in Chrome or Safari.</p>
-        <Button
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
-          onClick={() => (window.location.href = "https://tuan-ai-trip-planner.vercel.app/")}
-        >
-          Open in Chrome or Safari
-        </Button>
+        <p>😅🥺😭</p>
       </div>
     );
   }
