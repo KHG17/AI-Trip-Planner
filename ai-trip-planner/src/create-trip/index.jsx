@@ -44,40 +44,66 @@ function CreateTrip() {
     onError: (error) => console.log(error)
   });
 
-  const OnGenerateTrip = async () => {
-
+  const validateForm = () => {
     const user = localStorage.getItem('user');
-
     if (!user) {
-      setOpenDialog(true)
-      return ;
+      setOpenDialog(true);
+      return false;
     }
-
-    if (formData?.numberOfDays > 5 && !formData?.location || !formData?.budget || !formData?.people) {
-      toast("Please fill out all of the details!")
-      return ;
+  
+    const numberOfDays = parseInt(formData?.numberOfDays, 10);
+  
+    if (!numberOfDays || numberOfDays <= 0 || numberOfDays > 8) {
+      toast(numberOfDays > 8 ? "AI can only generate trips for up to 8 days!" : "Please enter a valid number of days greater than 0!");
+      return false;
     }
-
-    setLoading(true);
-    const FINAL_PROMPT = AI_PROMPT
-    .replace('{location}',formData?.location?.label)
-    .replace('{totalDays}',formData?.numberOfDays)
-    .replace('{people}',formData?.people)
-    .replace('{budget}',formData?.budget)
-    .replace('{totalDays}',formData?.numberOfDays)
-
-    const result = await chatSession.sendMessage(FINAL_PROMPT);
-
-    console.log("--",result?.response?.text());
-    setLoading(false);
-    SaveAiTrip(result?.response?.text())
+  
+    if (!formData?.location || !formData?.budget || !formData?.people) {
+      toast("Please fill out all of the details!");
+      return false;
+    }
+  
+    return true;
   };
+
+  const OnGenerateTrip = async () => {
+    if (!validateForm()) return;
+  
+    setLoading(true);
+  
+    const FINAL_PROMPT = AI_PROMPT
+      .replace('{location}', formData?.location?.label)
+      .replace('{totalDays}', formData?.numberOfDays)
+      .replace('{people}', formData?.people)
+      .replace('{budget}', formData?.budget);
+  
+    try {
+      const result = await chatSession.sendMessage(FINAL_PROMPT);
+      console.log("--", result?.response?.text());
+      SaveAiTrip(result?.response?.text());
+    } catch (error) {
+      console.error("Error generating trip:", error);
+      toast("There was an issue generating your trip. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };  
 
   const SaveAiTrip = async (TripData) => {
     
     setLoading(true);
     const user = JSON.parse(localStorage.getItem('user'));
     const docId = Date.now().toString();
+
+    let parsedTripData;
+    try {
+      parsedTripData = JSON.parse(TripData);  // Safe JSON parsing
+    } catch (error) {
+      console.error("Error parsing AI response:", error);
+      toast("Oops! There was an issue generating your trip. Please try again.");
+      setLoading(false);
+      return; // Stop execution if parsing fails
+    }
 
     await setDoc(doc(db, "AITrips", docId), {
       userSelection: formData,
@@ -98,7 +124,7 @@ function CreateTrip() {
       }
     }).then((response) => {
       console.log(response);
-      localStorage.setItem('user',JSON.stringify(response.data));
+      localStorage.setItem('user', JSON.stringify(response.data));
       setOpenDialog(false);
       OnGenerateTrip();
     })
